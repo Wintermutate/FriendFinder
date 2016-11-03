@@ -8,15 +8,26 @@ module.exports = function (app){
 	app.post('/api/friends', function (req, res){
 		
 		var bestMatch = null;
-		var difference = null;
+		var difference = 0;
+		var minDifference;
 
 		var currentFriend = req.body;
 
 		for (var i = 0; i < friendData.length i++){
-			
+			difference = 0;
+			for (var j = 0; j<currentFriend.scores.length; j++){
+				difference += Math.abs(currentFriend.scores[j] - friendData[i].scores[j]);		 		
+			}
+			if (!bestMatch){
+				bestMatch = friendData[i];
+				minDifference = difference;
+			} else if (minDifference >= difference){
+				bestMatch = friendData[i];
+				minDifference = difference;
+			}
 		}
-		friendData.push(req.body);
-		res.json(true);
+		res.send(bestMatch);
+		friendData.push(req.body);		
 	})
 
 }
